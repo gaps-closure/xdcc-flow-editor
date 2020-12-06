@@ -1,0 +1,15 @@
+{
+  "name": "xdcc_flow_editor",
+  "version": "1.0.0",
+  "description": "Flow Editor",
+  "main": "xdcc-main.js",
+  "keywords": [],
+  "author": "",
+  "license": "BSD",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^10.1.5"
+  }
+}
