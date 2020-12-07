@@ -10,15 +10,18 @@ var xdcc_json = null;
 //additional files (not saved)
 var addtl_files={};
 
-//File IO operations
+/** Get the file (including path) that we are working on **/
 ipcMain.handle('get-json-name', (event) => {
-  return(json_file);
+    console.log("in get-json-name");
+    return(json_file);
 });
 
+/** reload the json/file data from disk without saving changes **/
 ipcMain.handle('reload-json', (event) => {
     return reload_xdcc_json();
 });
 
+/** get the current working copy of the json **/
 ipcMain.handle('get-json', (event) => {
     if(xdcc_json === null){
         reload_xdcc_json();
@@ -26,11 +29,27 @@ ipcMain.handle('get-json', (event) => {
     return xdcc_json;
 });
 
+/** Commit all changes to disk **/
 ipcMain.handle('save-json', (event) => {
     if(xdcc_json === null){
         reload_xdcc_json();
     }
     save_xdcc_json();
+});
+
+/** Update the current working copy of the json **/
+ipcMain.handle('update-json', (event, newjson) => {
+    xdcc_json = newjson;
+});
+
+/** Get the working copy of an additional file **/
+ipcMain.handle('get-addtl-file', (event, file) => {
+    read_adtl_file(file);
+});
+
+/** Update the working copy of an additional file **/
+ipcMain.handle('update-addtl-file', (event, file, data) => {
+    addtl_files[file]=data;
 });
 
 

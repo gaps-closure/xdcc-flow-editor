@@ -1,0 +1,53 @@
+div.templates {
+    display: none;
+}
+
+div.working-file {
+    display: block;
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    background: black;
+    color: #9999CC;
+    padding: 2px;
+}
+
+#title {
+    text-align: center;
+    font-size: x-large;
+    font-weight: bold;
+    padding: 3px;
+    color: white;
+    background: #444444;
+    border: 1px solid #444444;
+}
+
+div.tab-listing {
+    padding-top: 0.5ex;
+    padding-bottom: 0.5ex;
+    padding-left: 0.25ex;
+    padding-right: 0.25ex;
+    background: #444444;
+    border: 1px solid #444444;
+    color: white;
+    display: inline-block;
+}
+div.tab-listing .tab-entry {
+    padding: 0.5ex;
+    margin-left: 0.25ex;
+    margin-right: 0.25ex;
+    cursor: pointer;
+    user-select: none;
+}
+
+div.tab-listing .tab-inactive {
+    background: #CCCCCC;
+    font-weight: bold;
+    border: 1px solid #222222;
+    color: #111111;
+}
+
+div.tab-listing .tab-active {
+    font-weight: bold;
+    border: 1px solid #444444;
+}

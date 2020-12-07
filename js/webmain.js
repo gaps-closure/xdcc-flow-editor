@@ -1,4 +1,5 @@
 /** Main website side javascript to manage the entire site **/
+const ipc = require("electron").ipcRenderer;
 
 //current modules
 var modules={}
@@ -45,7 +46,7 @@ function register_site_module(module_name, module_tab, main_page, templates, act
     //add the module link to the tab bar
     if(module_tab !== null){
         console.log("Add tab " + module_tab);
-        var tab = $("<span class='tab-entry' />");
+        var tab = $("<span class='tab-entry tab-inactive' />");
         tab.attr("data-module",module_name);
         tab.text(module_tab);
         tab.click(function (){
@@ -63,9 +64,46 @@ function register_site_module(module_name, module_tab, main_page, templates, act
     }
 }
 
-
 function display_module(name){
     var $ = jQuery;
     console.log("Display: " + name);   
     
+    var frame = $("div.main-frame");
+    if(active_module !== null){
+        if(modules[active_module].deactivate_callback !== null && !modules[active_module].deactivate_callback(name)){
+            console.log("Cancel loading: " + name);
+            return;
+        }
+    }
+    
+    active_module = name;
+    frame.children().remove();
+    frame.append(modules[active_module].main_page);
+    if(modules[active_module].activate_callback !== null){
+        modules[active_module].activate_callback();
+    }
+    
+    $("div.tab-listing .tab-entry").each(function(i,e){
+        var tab = $(e);
+        if(tab.attr("data-module") == active_module){
+            tab.removeClass("tab-inactive");
+            tab.addClass("tab-active");
+        } else {
+            tab.removeClass("tab-active");
+            tab.addClass("tab-inactive");
+        }
+    });
+}
+
+/** events on page load (load working file into page) **/
+jQuery(document).ready(function () {
+    get_json_name().then( (file) => {
+        jQuery("div.working-file").text(file);
+    });
+});
+
+/** IPC API **/
+
+async function get_json_name(){
+    return await ipc.invoke('get-json-name');
 }
