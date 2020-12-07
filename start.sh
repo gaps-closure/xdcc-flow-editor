@@ -4,8 +4,9 @@ json=$1
 
 if [ "$json" == "" ]
 then
-	echo missing json using "xdcc.json"
-	json="xdcc.json"
+	echo missing json using "xdcc/xdcc.json"
+	mkdir -p xdcc
+	json="xdcc/xdcc.json"
 fi
 
 json="$PWD/$json"

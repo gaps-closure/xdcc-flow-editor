@@ -1,32 +1,44 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+	<head>
+		<meta charset="UTF-8">
+		<title>Hello World!</title>
+		<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
 
-	<!--jquery.modal css-->
-	<link rel="stylesheet" href="./css/external/jquery.modal.min.css" type="text/css" />
+		<!--jquery.modal css-->
+		<link rel="stylesheet" href="./css/external/jquery.modal.min.css" type="text/css" />
 
-	<!--jexcel/jsuites css-->
-	<link rel="stylesheet" href="./css/external/jsuites.css" type="text/css" />
-	<link rel="stylesheet" href="./css/external/jexcel.css" type="text/css" />
+		<!--jexcel/jsuites css-->
+		<link rel="stylesheet" href="./css/external/jsuites.css" type="text/css" />
+		<link rel="stylesheet" href="./css/external/jexcel.css" type="text/css" />
 
-	<!--jquery library -->
-	<script language="javascript">jQuery=require("./js/external/jquery-3.2.1.min.js");</script>
-	<script src="./js/external/jquery.modal-0.8.2.min.js"></script>
+		<!--jquery library -->
+		<script language="javascript">jQuery=require("./js/external/jquery-3.2.1.min.js");</script>
+		<script src="./js/external/jquery.modal-0.8.2.min.js"></script>
 
-	<!-- jexcel/jsuites -->
-	<script src="./js/external/jsuites.js"></script>
-	<script src="./js/external/jexcel.js"></script>
+		<!-- jexcel/jsuites -->
+		<script src="./js/external/jsuites.js"></script>
+		<script src="./js/external/jexcel.js"></script>
 
-	
-	<!-- Our logic -->
-	<!--script src="./js/webmain.js"></script-->
-</head>
-<body>
-    <div class="menu-bar">
-		<span class="menu-open">Open</span> | <span class="menu-save">Save</span> | ???
-	</div>
-</body>
+		
+		<!-- Our logic -->
+		<script src="./js/webmain.js"></script>
+		
+		<!-- view modules (first one is default)-->
+		<script src="./js/mod_components.js"></script>
+	</head>
+	<body>
+		<!-- section for the menu at the top of the screen -->
+		<div class="menu-bar">
+		</div>
+		<!-- section for the tab bar under the menu -->
+		<div class="tab-listing">
+		</div>
+		<!-- main frame, content of the current module -->
+		<div class="main-frame">
+		</div>
+		<!-- area to inject templates such as modal boxes -->
+		<div class="templates">
+		</div>
+	</body>
 </html>
