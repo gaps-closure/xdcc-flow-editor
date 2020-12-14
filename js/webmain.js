@@ -107,3 +107,7 @@ jQuery(document).ready(function () {
 async function get_json_name(){
     return await ipc.invoke('get-json-name');
 }
+
+async function get_working_json(){
+    return await ipc.invoke('get-json');
+}
