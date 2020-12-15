@@ -1,2 +1,11 @@
+#input parameter file
+
 /param.inputfile
+
+# default save directory
+
 /xdcc/*
+
+# npm runtime/temp files
+/node_modules
+/package-lock.json

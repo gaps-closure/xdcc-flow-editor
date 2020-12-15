@@ -1,0 +1,34 @@
+=====================================
+== Installing the Xdcc Flow Editor ==
+=====================================
+
+
+Run the following to get all the npm packages:
+
+> npm install
+
+
+
+==============================
+== Running Xdcc Flow Editor ==
+==============================
+
+> ./start.sh
+
+
+
+=====================
+== Developer Notes ==
+=====================
+
+
+Various files/paths of note:
+
+ * css/main.css - the main style sheet of the program
+ * css/external/* - stylesheets provided by libraries
+ * js/webmain.js - the main (core) webapp gui javascript
+ * js/mod_*.js - the various on screen tabs/modules
+ * js/external/* - external javascript libraries
+ * start.sh - script to inject the parameter file and run the editor
+ * xdcc-main.js - the main launch script of the editor (launches electron and manages disk io)
+ * package.json - the npm package list (for npm install)
