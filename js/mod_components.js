@@ -3,7 +3,7 @@
 //init
 jQuery(document).ready(function () {
     var $=jQuery;
-    var page_template="<div id='title'>Components</div><div id='component_table' /><div id='component_info' />";
+    var page_template="<div id='component_table' /><div id='component_info' />";
     var page_data={};
     var jexcel_table = null;
     
@@ -31,5 +31,5 @@ jQuery(document).ready(function () {
     }
     
     console.log("site is ready, add Components");
-    register_site_module("mod_components", "Components" , $(page_template), null, load_page, null);
+    register_site_module("mod_components", "Components", "Components", $(page_template), null, load_page, null);
 });

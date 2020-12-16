@@ -9,6 +9,7 @@ var active_module=null;
  * A site module, controls a tab on the screen
  * module_name - name of the module
  * module_tab - name of tab if shown (null if not)
+ * module_title - name of the page in the title bar
  * main_page - the content of the main frame when active
  * templates - html content to add to templates (always avalible/hidden)
  * activate_callback - callback when the module is activated (null if not needed)
@@ -20,13 +21,14 @@ var active_module=null;
  * 	  - return true to allow new module to load
  *    - return false to cancel module switch
  */
-function register_site_module(module_name, module_tab, main_page, templates, activate_callback, deactivate_callback){
+function register_site_module(module_name, module_tab, module_title, main_page, templates, activate_callback, deactivate_callback){
     var $ = jQuery;
     
     //build the module object
     var mod={
         "module_name": module_name,
         "module_tab": module_tab,
+        "module_title": module_title,
         "main_page": main_page,
         "activate_callback": activate_callback,
         "deactivate_callback": deactivate_callback
@@ -64,11 +66,14 @@ function register_site_module(module_name, module_tab, main_page, templates, act
     }
 }
 
+/** Display the named module (switch to the module) **/
 function display_module(name){
     var $ = jQuery;
     console.log("Display: " + name);   
     
-    var frame = $("div.main-frame");
+    var frame = $("#main-content");
+    var title = $("#title");
+    
     if(active_module !== null){
         if(modules[active_module].deactivate_callback !== null && !modules[active_module].deactivate_callback(name)){
             console.log("Cancel loading: " + name);
@@ -79,6 +84,7 @@ function display_module(name){
     active_module = name;
     frame.children().remove();
     frame.append(modules[active_module].main_page);
+    title.text(modules[active_module].module_title);
     if(modules[active_module].activate_callback !== null){
         modules[active_module].activate_callback();
     }
@@ -93,21 +99,39 @@ function display_module(name){
             tab.addClass("tab-inactive");
         }
     });
+    update_div_sizes();
+}
+
+/** Location to update the sizes of specific items on the page:
+    .main- **/
+function update_div_sizes(){
+    var $ = jQuery;
+    var content = $("#main-content");
+    var title = $("#title");
+    var calc_height = $("div.working-file").position().top;
+    
+    //console.log("top of working file: " + calc_height);
+    calc_height -= title.position().top + title.outerHeight();
+    content.height(calc_height);
 }
 
 /** events on page load (load working file into page) **/
 jQuery(document).ready(function () {
+    jQuery(window).resize(update_div_sizes);
     get_json_name().then( (file) => {
         jQuery("div.working-file").text(file);
+        update_div_sizes();
     });
 });
 
 /** IPC API **/
 
+/** Get the json file name **/
 async function get_json_name(){
     return await ipc.invoke('get-json-name');
 }
 
+/** Get the working copy of the json file **/
 async function get_working_json(){
     return await ipc.invoke('get-json');
 }

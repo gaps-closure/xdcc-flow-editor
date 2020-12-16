@@ -1,7 +1,52 @@
+/** Basic page parameters (body, hidden areas ect) **/
 div.templates {
     display: none;
 }
 
+body {
+    padding: 0px;
+    margin: 0px;
+    min-width: 733px;
+    background: #DEDEFF;
+    overflow: hidden;
+}
+
+#main-content {
+    background: white;
+    overflow: auto;
+}
+
+/** Menu Button bar **/
+
+div.menu-bar {
+    text-align: right;
+}
+
+div.btn-block {
+    display: inline-block;
+    text-align: center;
+    font-size: smaller;
+    width: 9ex;
+    background: #DDDDDD;
+    padding: 3px;
+    border: 1px solid #555555;
+}
+
+div.btn-block img {
+    height: 36px;
+    width: 36px;
+    align-content: center;
+}
+
+div.btn-block .btn-label
+{
+    text-align: center;
+    width: 100%;
+    display: block;
+    margin-top: -0.5ex; /* adjust text to be a bit closer */
+}
+
+/** Working file information (bottom of page) **/
 div.working-file {
     display: block;
     position: absolute;
@@ -12,6 +57,7 @@ div.working-file {
     padding: 2px;
 }
 
+/** Page title section under tabs **/
 #title {
     text-align: center;
     font-size: x-large;
@@ -20,7 +66,10 @@ div.working-file {
     color: white;
     background: #444444;
     border: 1px solid #444444;
+    width: 100%;
 }
+
+/** Tabs top of page **/
 
 div.tab-listing {
     padding-top: 0.5ex;

@@ -3,7 +3,7 @@
 //init
 jQuery(document).ready(function () {
     var $=jQuery;
-    var page_template="<div id='title'>Message Flows</div><div id='flow_table' /><div id='component_info' />";
+    var page_template="<div id='flow_table' /><div id='component_info' />";
     var page_data={};
     var jexcel_table = null;
     
@@ -29,5 +29,5 @@ jQuery(document).ready(function () {
         });
     }
     
-    register_site_module("mod_flows", "Flows" , $(page_template), null, load_page, null);
+    register_site_module("mod_flows", "Flows" , "Message Flows", $(page_template), null, load_page, null);
 });
