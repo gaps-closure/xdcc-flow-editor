@@ -628,15 +628,6 @@
             ads.setAttribute('href', 'https://bossanova.uk/jexcel/');
             obj.ads = document.createElement('div');
             obj.ads.className = 'jexcel_about';
-            try {
-                if (typeof(sessionStorage) !== "undefined" && ! sessionStorage.getItem('jexcel')) {
-                    sessionStorage.setItem('jexcel', true);
-                    var img = document.createElement('img');
-                    img.src = '//bossanova.uk/jexcel/logo.png';
-                    ads.appendChild(img);
-                }
-            } catch (exception) {
-            }
             var span = document.createElement('span');
             span.innerHTML = 'Jexcel spreadsheet';
             ads.appendChild(span);
