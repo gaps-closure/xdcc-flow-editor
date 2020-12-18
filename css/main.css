@@ -20,6 +20,7 @@ body {
 
 div.menu-bar {
     text-align: right;
+    margin:1px;
 }
 
 div.btn-block {

@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require("path");
 const { ipcMain } = require('electron')
 
+const enable_debug = false; //set to true for debug menu/electron menus
+
 //the name of the loaded json
 var json_file_name;
 //the xdcc_json data (not saved)
@@ -124,7 +126,7 @@ function prepareParam () {
 //Create the browser window
 function createWindow () {
   const win = new BrowserWindow({
-    width: 800,
+    width: 900,
     height: 600,
     webPreferences: {
       nodeIntegration: true
@@ -132,7 +134,13 @@ function createWindow () {
   });
 
   win.loadFile('index.html');
-  win.webContents.openDevTools();
+  
+  if(enable_debug){
+    win.webContents.openDevTools();
+  }
+  else{
+    win.setMenu(null);
+  }
 }
 
 app.whenReady().then(prepareParam);
