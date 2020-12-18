@@ -11,6 +11,8 @@ var json_file_name;
 var xdcc_json = null;
 //additional files (not saved)
 var addtl_files={};
+//flag for unsaved changes
+var unsaved_changes=false;
 
 //Read the file name from the parm file
 function prepareParams () {
@@ -78,7 +80,7 @@ app.on('activate', () => {
 
 /** Saves all pending changes **/
 function save_xdcc_json(){
-    fs.writeFileSync(json_file,xdcc_json,{"endocding": "utf8"});
+    fs.writeFileSync(json_file,JSON.stringify(xdcc_json),{"endocding": "utf8"});
     //save the standalone files
     var dir = path.dirname(json_file);
     
@@ -102,7 +104,7 @@ function reload_xdcc_json(){
             return(obj);
         }
         catch(err){
-            log.console("Unable to read json file: " + err)
+            console.log("Unable to read json file: " + err)
             //clear
             addtl_files={}
             return({});
@@ -164,7 +166,15 @@ ipcMain.handle('save-json', (event) => {
 
 /** Update the current working copy of the json **/
 ipcMain.handle('update-json', (event, newjson) => {
+    if(xdcc_json != newjson){
+        unsaved_changes = true;
+    }
     xdcc_json = newjson;
+});
+
+/** Check if unsaved changes **/
+ipcMain.handle('check-if-unsaved', (event) => {
+    return unsaved_changes;
 });
 
 /** Get the working copy of an additional file **/

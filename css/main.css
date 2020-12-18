@@ -101,3 +101,10 @@ div.tab-listing .tab-active {
     font-weight: bold;
     border: 1px solid #444444;
 }
+
+/** Component table **/
+#component_table {
+    width: 50%;
+    text-align: right;
+    display: inline-block;
+}

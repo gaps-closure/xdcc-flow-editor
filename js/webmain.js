@@ -14,6 +14,7 @@ var active_module=null;
  * templates - html content to add to templates (always avalible/hidden)
  * activate_callback - callback when the module is activated (null if not needed)
  * deactivate_callback - callback when module is attempted to change (null if not needed)
+ *                       this should stash any changes into the working copy
  *
  * template: void activate_callback()
  * 
@@ -115,14 +116,32 @@ function update_div_sizes(){
     content.height(calc_height);
 }
 
-/** events on page load (load working file into page) **/
+/** events on page load (load working file into page) and other initial settings**/
 jQuery(document).ready(function () {
     jQuery(window).resize(update_div_sizes);
     get_json_name().then( (file) => {
         jQuery("div.working-file").text(file);
         update_div_sizes();
     });
+    jQuery("#btn-save").click(save_files);
 });
+
+/** Save click callback */
+function save_files(){
+    //call the deactivate and activate functions before/after save to ensure the working copy is stashed
+    if(active_module !== null){
+        if(modules[active_module].deactivate_callback !== null && !modules[active_module].deactivate_callback(active_module)){
+            console.log("current module canceled saving, and hopefully informed user why");
+            return;
+        }
+    }
+    save_all();
+    if(active_module !== null){
+        if(modules[active_module].activate_callback !== null){
+            modules[active_module].activate_callback();
+        }
+    }
+}
 
 /** IPC API **/
 
@@ -134,4 +153,19 @@ async function get_json_name(){
 /** Get the working copy of the json file **/
 async function get_working_json(){
     return await ipc.invoke('get-json');
+}
+
+/** Stash the current json information */
+async function update_json(new_json){
+    return await ipc.invoke('update-json',new_json);
+}
+
+/** Save all (from working copy) **/
+async function save_all(){
+    return await ipc.invoke('save-json');
+}
+
+/** Check if any changes are unsaved from main process */
+async function check_unsaved(){
+    return await ipc.invoke('check-if-unsaved');
 }
