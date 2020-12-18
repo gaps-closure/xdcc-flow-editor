@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require("path");
 const { ipcMain } = require('electron')
 
-const enable_debug = false; //set to true for debug menu/electron menus
-
+//if debug mode is enabled (false by defautl)
+var enable_debug = false; 
 //the name of the loaded json
 var json_file_name;
 //the xdcc_json data (not saved)
@@ -12,48 +12,69 @@ var xdcc_json = null;
 //additional files (not saved)
 var addtl_files={};
 
-/** Get the file (including path) that we are working on **/
-ipcMain.handle('get-json-name', (event) => {
-    console.log("in get-json-name");
-    return(json_file);
-});
+//Read the file name from the parm file
+function prepareParams () {
+    var loadedCnt=2;//number of parameters we are loading
 
-/** reload the json/file data from disk without saving changes **/
-ipcMain.handle('reload-json', (event) => {
-    return reload_xdcc_json();
-});
+    fs.readFile("param.debugmode", "utf8", function (err,data) {
+        console.log("debug mode: " + data);
+        if(data.trim()==="true"){
+            enable_debug = true;
+        }
 
-/** get the current working copy of the json **/
-ipcMain.handle('get-json', (event) => {
-    if(xdcc_json === null){
-        reload_xdcc_json();
+        loadedCnt--;
+        if(loadedCnt == 0){ //this is the last parameter loaded, open the window
+            createWindow(); 
+        }
+    });
+    fs.readFile("param.inputfile", "utf8", function (err,data) {
+        console.log("xdcc file: " + data);
+        json_file = data.trim();
+        loadedCnt--;
+        if(loadedCnt == 0){ //this is the last parameter loaded, open the window
+            createWindow();
+        }
+    });
+}
+
+
+//Create the browser window
+function createWindow () {
+    const win = new BrowserWindow({
+        width: 900,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true
+        }
+    });
+
+    win.loadFile('index.html');
+
+    if(enable_debug){
+        win.webContents.openDevTools();
     }
-    return xdcc_json;
-});
-
-/** Commit all changes to disk **/
-ipcMain.handle('save-json', (event) => {
-    if(xdcc_json === null){
-        reload_xdcc_json();
+    else{
+        win.setMenu(null);
     }
-    save_xdcc_json();
-});
+}
 
-/** Update the current working copy of the json **/
-ipcMain.handle('update-json', (event, newjson) => {
-    xdcc_json = newjson;
-});
+/***** Application Startup ******/
 
-/** Get the working copy of an additional file **/
-ipcMain.handle('get-addtl-file', (event, file) => {
-    read_adtl_file(file);
-});
+app.whenReady().then(prepareParams);
 
-/** Update the working copy of an additional file **/
-ipcMain.handle('update-addtl-file', (event, file, data) => {
-    addtl_files[file]=data;
-});
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+})
 
+app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+    }
+})
+
+/***** File IO operations *****/
 
 /** Saves all pending changes **/
 function save_xdcc_json(){
@@ -112,47 +133,46 @@ function read_adtl_file(filename){
     }
 }
 
+/*****  IPC Calls between main process and web gui  ******/
 
-//Read the file name from the parm file
-function prepareParam () {
-  fs.readFile("param.inputfile", "utf8", function (err,data) {
-    console.log("xdcc file: " + data);
-    json_file = data.trim();
-    createWindow();
-  });
-}
+/** Get the file (including path) that we are working on **/
+ipcMain.handle('get-json-name', (event) => {
+    console.log("in get-json-name");
+    return(json_file);
+});
 
+/** reload the json/file data from disk without saving changes **/
+ipcMain.handle('reload-json', (event) => {
+    return reload_xdcc_json();
+});
 
-//Create the browser window
-function createWindow () {
-  const win = new BrowserWindow({
-    width: 900,
-    height: 600,
-    webPreferences: {
-      nodeIntegration: true
+/** get the current working copy of the json **/
+ipcMain.handle('get-json', (event) => {
+    if(xdcc_json === null){
+        reload_xdcc_json();
     }
-  });
+    return xdcc_json;
+});
 
-  win.loadFile('index.html');
-  
-  if(enable_debug){
-    win.webContents.openDevTools();
-  }
-  else{
-    win.setMenu(null);
-  }
-}
+/** Commit all changes to disk **/
+ipcMain.handle('save-json', (event) => {
+    if(xdcc_json === null){
+        reload_xdcc_json();
+    }
+    save_xdcc_json();
+});
 
-app.whenReady().then(prepareParam);
+/** Update the current working copy of the json **/
+ipcMain.handle('update-json', (event, newjson) => {
+    xdcc_json = newjson;
+});
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-})
+/** Get the working copy of an additional file **/
+ipcMain.handle('get-addtl-file', (event, file) => {
+    read_adtl_file(file);
+});
 
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
-})
+/** Update the working copy of an additional file **/
+ipcMain.handle('update-addtl-file', (event, file, data) => {
+    addtl_files[file]=data;
+});

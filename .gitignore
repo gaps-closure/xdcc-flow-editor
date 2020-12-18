@@ -1,6 +1,7 @@
-#input parameter file
+#input parameter files
 
 /param.inputfile
+/param.debugmode
 
 # default save directory
 
