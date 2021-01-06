@@ -123,7 +123,29 @@ jQuery(document).ready(function () {
         jQuery("div.working-file").text(file);
         update_div_sizes();
     });
+
+    //buttons at top of the screen, register actions
     jQuery("#btn-save").click(save_files);
+    jQuery("#btn-validate").click(validate_files);
+    jQuery("#btn-exit").click(exit_client);
+
+    //register animation for buttons at top of screen
+    var pressed_btn_lst=[];
+    jQuery(".btn-block").mousedown((event) => {
+        var btn = jQuery(event.target);
+        console.log(btn);
+        if(!btn.hasClass("btn-block")){
+            btn = btn.parent(".btn-block");
+        }
+        console.log("btn pressed " + btn.find(".btn-label").text());
+        btn.addClass("btn-block-pressed");
+        pressed_btn_lst.push(btn);
+    });
+    jQuery(document).mouseup(() => {
+        while(pressed_btn_lst.length > 0){
+            pressed_btn_lst.pop().removeClass("btn-block-pressed");
+        }
+    });
 });
 
 /** Save click callback */
@@ -141,6 +163,36 @@ function save_files(){
             modules[active_module].activate_callback();
         }
     }
+}
+
+/** Validate button callback **/
+function validate_files(){
+    
+}
+
+/** Exit button callback **/
+function exit_client(){
+    if(active_module !== null){
+        if(modules[active_module].deactivate_callback !== null && !modules[active_module].deactivate_callback(active_module)){
+            console.log("current module canceled saving, and hopefully informed user why");
+            return;
+        }
+    }
+
+    check_unsaved().then(unsaved => {
+        if(unsaved){
+            console.log("The file is not saved");
+        }
+        else{
+            console.log("All is saved close the window");
+            exit_app();
+        }
+        if(active_module !== null){
+            if(modules[active_module].activate_callback !== null){
+                modules[active_module].activate_callback();
+            }
+        }
+    });
 }
 
 /** IPC API **/
@@ -168,4 +220,9 @@ async function save_all(){
 /** Check if any changes are unsaved from main process */
 async function check_unsaved(){
     return await ipc.invoke('check-if-unsaved');
+}
+
+/** Check if any changes are unsaved from main process */
+async function exit_app(){
+    return await ipc.invoke('exit');
 }

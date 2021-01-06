@@ -31,12 +31,18 @@ div.btn-block {
     background: #DDDDDD;
     padding: 3px;
     border: 1px solid #555555;
+    user-select: none;
+}
+
+div.btn-block-pressed{
+    background: #AAAAAA;
 }
 
 div.btn-block img {
     height: 36px;
     width: 36px;
     align-content: center;
+    user-select: none;
 }
 
 div.btn-block .btn-label

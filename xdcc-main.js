@@ -87,8 +87,11 @@ function save_xdcc_json(){
     for(var filename in addtl_files){
         fs.writeFileSync(dir + path.sep + filename,addtl_files[filename],{"endocding": "utf8"});
     }
+
     //clear
-    addtl_files={}
+    addtl_files={};
+    unsaved_changes=false;
+    console.log("unsaved_changes - " + unsaved_changes);
 }
 
 
@@ -166,14 +169,17 @@ ipcMain.handle('save-json', (event) => {
 
 /** Update the current working copy of the json **/
 ipcMain.handle('update-json', (event, newjson) => {
-    if(xdcc_json != newjson){
+    console.log("update json");
+    if(JSON.stringify(xdcc_json) !== JSON.stringify(newjson)){
         unsaved_changes = true;
+        console.log("unsaved_changes - " + unsaved_changes);
     }
     xdcc_json = newjson;
 });
 
 /** Check if unsaved changes **/
 ipcMain.handle('check-if-unsaved', (event) => {
+    console.log("check unsaved_changes - " + unsaved_changes);
     return unsaved_changes;
 });
 
@@ -185,4 +191,9 @@ ipcMain.handle('get-addtl-file', (event, file) => {
 /** Update the working copy of an additional file **/
 ipcMain.handle('update-addtl-file', (event, file, data) => {
     addtl_files[file]=data;
+});
+
+/** Exit **/
+ipcMain.handle('exit', (event, file, data) => {
+    app.quit();
 });
