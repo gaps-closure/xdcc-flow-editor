@@ -146,6 +146,7 @@ jQuery(document).ready(function () {
             pressed_btn_lst.pop().removeClass("btn-block-pressed");
         }
     });
+
 });
 
 /** Save click callback */
@@ -180,8 +181,22 @@ function exit_client(){
     }
 
     check_unsaved().then(unsaved => {
+        
         if(unsaved){
             console.log("The file is not saved");
+            jQuery("#confirm-exit").modal();
+            jQuery("#confirm-exit .confirm-save").click(()=>{
+                //save + exit
+                save_all().then(()=>{exit_app()});
+            });
+            jQuery("#confirm-exit .confirm-dont-save").click(()=>{
+                //simply exit don't save
+                exit_app();
+            });
+            jQuery("#confirm-exit .cancel").click(()=>{
+                //just close the modal
+                jQuery.modal.close();
+            });
         }
         else{
             console.log("All is saved close the window");
@@ -226,3 +241,11 @@ async function check_unsaved(){
 async function exit_app(){
     return await ipc.invoke('exit');
 }
+
+/** Event from the main process to close the client **/
+ipc.on("native-close", (event, act) => {
+    if(act){
+        console.log("Exit requested");
+        exit_client();
+    }
+})

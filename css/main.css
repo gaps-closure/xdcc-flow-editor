@@ -108,6 +108,25 @@ div.tab-listing .tab-active {
     border: 1px solid #444444;
 }
 
+/** Modal dialog **/
+
+.modal .modal-icon {
+    width: 36px;
+    height: 36px;
+    display: inline-block;
+}
+
+.modal .modal-text {
+    display: inline-block;
+    padding-left: 40px;
+    max-width: 65%;
+}
+
+.modal .modal-buttons {
+    text-align: right;
+    padding-top: 3em;
+}
+
 /** Component table **/
 #component_table {
     width: 50%;

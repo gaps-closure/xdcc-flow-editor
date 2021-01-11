@@ -14,6 +14,9 @@ var addtl_files={};
 //flag for unsaved changes
 var unsaved_changes=false;
 
+//flag to allow exit
+var allow_exit=false;
+
 //Read the file name from the parm file
 function prepareParams () {
     var loadedCnt=2;//number of parameters we are loading
@@ -58,6 +61,15 @@ function createWindow () {
     else{
         win.setMenu(null);
     }
+
+    win.on('close', (e) => {
+        if(!allow_exit){
+            console.log("-> request exit")
+            e.preventDefault();
+            //send a request to close to the render process
+            win.webContents.send('native-close', true);
+        }
+    });
 }
 
 /***** Application Startup ******/
@@ -195,5 +207,6 @@ ipcMain.handle('update-addtl-file', (event, file, data) => {
 
 /** Exit **/
 ipcMain.handle('exit', (event, file, data) => {
+    allow_exit = true;
     app.quit();
 });
