@@ -92,7 +92,7 @@ app.on('activate', () => {
 
 /** Saves all pending changes **/
 function save_xdcc_json(){
-    fs.writeFileSync(json_file,JSON.stringify(xdcc_json),{"endocding": "utf8"});
+    fs.writeFileSync(json_file,JSON.stringify(xdcc_json,null,2),{"endocding": "utf8"});
     //save the standalone files
     var dir = path.dirname(json_file);
     
