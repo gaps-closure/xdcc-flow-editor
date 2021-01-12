@@ -15,14 +15,17 @@ var active_module=null;
  * activate_callback - callback when the module is activated (null if not needed)
  * deactivate_callback - callback when module is attempted to change (null if not needed)
  *                       this should stash any changes into the working copy
+ * resize_callback - callback when the screen is resized
  *
  * template: void activate_callback()
  * 
  * template: bool deactivate_callback(str new_module_name) 
  * 	  - return true to allow new module to load
  *    - return false to cancel module switch
+ * 
+ * template: void resize_callback()
  */
-function register_site_module(module_name, module_tab, module_title, main_page, templates, activate_callback, deactivate_callback){
+function register_site_module(module_name, module_tab, module_title, main_page, templates, activate_callback, deactivate_callback, resize_callback){
     var $ = jQuery;
     
     //build the module object
@@ -32,7 +35,8 @@ function register_site_module(module_name, module_tab, module_title, main_page, 
         "module_title": module_title,
         "main_page": main_page,
         "activate_callback": activate_callback,
-        "deactivate_callback": deactivate_callback
+        "deactivate_callback": deactivate_callback,
+        "resize_callback": resize_callback
     };
     
     //copy any templates to the DOM
@@ -114,6 +118,10 @@ function update_div_sizes(){
     //console.log("top of working file: " + calc_height);
     calc_height -= title.position().top + title.outerHeight();
     content.height(calc_height);
+
+    if(active_module !== null && modules[active_module].resize_callback){
+        modules[active_module].resize_callback();
+    }
 }
 
 /** events on page load (load working file into page) and other initial settings**/

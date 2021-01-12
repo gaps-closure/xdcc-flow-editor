@@ -70,7 +70,7 @@ jQuery(document).ready(function () {
                 "inFlows": component_inflows,
                 "outFlows": component_outflows
             }
-            topology[i] = row;
+            topology.push(row);
         }
         if(typeof page_data !== 'object'  || page_data == null){
             page_data={};
@@ -125,6 +125,12 @@ jQuery(document).ready(function () {
         }
     }
 
+    //resize the table when 
+    function resize_table(){
+        //resize table to fit
+        $("#main-content .jexcel_content").css("max-height",($("#main-content").height() - 5) + "px")
+    }
+
     /** Start reload from the working data **/
     function load_page(){
         $("#component_table").children().remove();
@@ -142,7 +148,7 @@ jQuery(document).ready(function () {
                 colWidths: [ 200, 200],
                 colHeaders: [ 'Component', 'Label' ],
                 tableOverflow:true,
-                tableHeight:'450px',
+                tableHeight:($("#main-content").height() - 5) + "px",
                 disableAddColumn:true,
                 onchange:cell_change,
                 onbeforechange: before_cell_change,
@@ -153,5 +159,5 @@ jQuery(document).ready(function () {
     }
     
     console.log("site is ready, add Components");
-    register_site_module("mod_components", "Components", "Components", $(page_template), null, load_page, unload_page);
+    register_site_module("mod_components", "Components", "Components", $(page_template), null, load_page, unload_page, resize_table);
 });
