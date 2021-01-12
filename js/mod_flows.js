@@ -108,7 +108,34 @@ jQuery(document).ready(function () {
         if(x==0 && value != last_updated_id){
             //update flow id
             if(last_updated_id !== undefined){
-                
+                var i=0;
+                //we need to update all instances of the old flowID to the new one in topology
+                if(typeof page_data === 'object' && "topology" in page_data ){
+                    $.each(page_data["topology"],(i, entry) => {
+                        if("inFlows" in entry){
+                            console.log("Check " + entry["component"] + " inFlows");
+                            
+                            for(i=0;i<entry["inFlows"].length;i++){
+                                if(entry["inFlows"][i] == last_updated_id){
+                                    console.log("update to " + value);
+                                    entry["inFlows"][i] = value;
+                                }
+                            }
+                            entry["inFlows"].sort((a,b)=>{return a-b});
+                        }
+                        if("outFlows" in entry){
+                            console.log("Check " + entry["component"] + " outFlows");
+
+                            for(i=0;i<entry["outFlows"].length;i++){
+                                if(entry["outFlows"][i] == last_updated_id){
+                                    console.log("update to " + value);
+                                    entry["outFlows"][i] = value;
+                                }
+                            }
+                            entry["outFlows"].sort((a,b)=>{return a-b});
+                        }
+                    });
+                }
             }
             last_updated_id=undefined;
         }

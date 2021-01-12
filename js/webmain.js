@@ -11,7 +11,7 @@ var active_module=null;
  * module_tab - name of tab if shown (null if not)
  * module_title - name of the page in the title bar
  * main_page - the content of the main frame when active
- * templates - html content to add to templates (always avalible/hidden)
+ * templates - html content to add to templates (always avalible/hidden,thus ensure ids don't collide between modules)
  * activate_callback - callback when the module is activated (null if not needed)
  * deactivate_callback - callback when module is attempted to change (null if not needed)
  *                       this should stash any changes into the working copy
