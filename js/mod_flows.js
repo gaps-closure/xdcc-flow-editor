@@ -7,6 +7,7 @@ jQuery(document).ready(function () {
     var page_data={}; //the full json
     var table_data=[]; //the visual table (flowID, message_name, Label)
     var id_list=[];
+    var component_pick_list=[];
     var last_updated_id=undefined;
 
     var jexcel_table = null;
@@ -50,6 +51,42 @@ jQuery(document).ready(function () {
     function extract_table_data(){
         //clear data
         table_data = [];
+        var sending_components={};
+        var recieving_components={};
+        component_pick_list=[]
+
+        //parse topology
+        if(page_data !== undefined && page_data != null && "topology" in page_data){
+            $.each(page_data["topology"],(i,topology) =>{
+                //add to the module list
+                component_pick_list.push(topology["component"]);
+
+                if("inFlows" in topology){
+                    $.each(topology["inFlows"],(i,id) =>{
+                        if(id in recieving_components){
+                            console.log("Expand [in] " + id + " with " + topology["component"] + " (Prev. " + recieving_components[id] + ")");
+                            recieving_components[id] += ";" + topology["component"];
+                        }
+                        else{
+                            console.log("New [in] " + id + " with " + topology["component"]);
+                            recieving_components[id] = topology["component"];
+                        }
+                    });
+                }
+                if("outFlows" in topology){
+                    $.each(topology["outFlows"],(i,id) =>{
+                        if(id in sending_components){
+                            console.log("Expand [out] " + id + " with " + topology["component"] + " (Prev. " + sending_components[id] + ")");
+                            sending_components[id] += ";" + topology["component"];
+                        }
+                        else{
+                            console.log("New [out] " + id + " with " + topology["component"]);
+                            sending_components[id] = topology["component"];
+                        }
+                    });
+                }
+            });
+        }
 
         if(page_data !== undefined && page_data != null && "flows" in page_data){
             var i;
@@ -60,7 +97,9 @@ jQuery(document).ready(function () {
                 table_data[i]=[
                     row["flowId"],
                     row["message"],
-                    row["label"]
+                    row["label"],
+                    recieving_components[row["flowId"]],
+                    sending_components[row["flowId"]]
                 ];
                 id_list.push(row["flowId"]);
             }
@@ -97,7 +136,7 @@ jQuery(document).ready(function () {
                     //empty value not allowed
                     //TODO popup warning
                     console.log("value must not be empty");
-                    return last_updated_id
+                    return last_updated_id;
                 }
             }
         }
@@ -108,7 +147,6 @@ jQuery(document).ready(function () {
         if(x==0 && value != last_updated_id){
             //update flow id
             if(last_updated_id !== undefined){
-                var i=0;
                 //we need to update all instances of the old flowID to the new one in topology
                 if(typeof page_data === 'object' && "topology" in page_data ){
                     $.each(page_data["topology"],(i, entry) => {
@@ -139,6 +177,52 @@ jQuery(document).ready(function () {
             }
             last_updated_id=undefined;
         }
+        if(x==3){
+            //update inFlows
+            console.log("Add " + value + " to inFlows");
+            if(typeof page_data === 'object' && "topology" in page_data ){
+                $.each(page_data["topology"],(i, entry) => {
+                    if("inFlows" in entry){
+                        //remove entries related to ourself
+                        entry["inFlows"] = entry["inFlows"].filter(v => v != table_data[y][0]);
+                    }
+                    else{
+                        entry["inFlows"] = [];
+                    }
+                    if(value.split(";").includes(entry["component"])){
+                        console.log("Add to component " + entry["component"] + " [" + table_data[y][0] + "]");
+                        //we need to re-add our flow to theis component
+                        entry["inFlows"].push(table_data[y][0]);
+                        entry["inFlows"].sort((a,b)=>{return a-b});
+                        console.log(entry["inFlows"])
+                    }
+                });
+            }
+        }
+        if(x==4){
+            //update outFlows
+            console.log("Add " + value + " to outFlows");
+            if(typeof page_data === 'object' && "topology" in page_data ){
+                $.each(page_data["topology"],(i, entry) => {
+                    if("outFlows" in entry){
+                        console.log("remove any existing entries");
+                        //remove entries related to ourself
+                        entry["outFlows"] = entry["outFlows"].filter(v => v != table_data[y][0]);
+                    }
+                    else{
+                        console.log("create missing list");
+                        entry["outFlows"] = [];
+                    }
+                    if(value.split(";").includes(entry["component"])){
+                        console.log("Add to component " + entry["component"] + " [" + table_data[y][0] + "]");
+                        //we need to re-add our flow to theis component
+                        entry["outFlows"].push(table_data[y][0]);
+                        entry["outFlows"].sort((a,b)=>{return a-b});
+                        console.log(entry["outFlows"])
+                    }
+                });
+            }
+        }
     }
 
     //resize the table when 
@@ -161,12 +245,14 @@ jQuery(document).ready(function () {
             jexcel_table = jexcel(sheet,
             {
                 data:table_data,
-                colWidths: [ 100, 250, 300],
-                colHeaders: [ 'Data ID', 'Message', 'Label', 'From Component', 'To Component' ],
+                colWidths: [ 100, 250, 250,250,250],
+                colHeaders: [ 'Data ID', 'Message', 'Label', 'From Component', 'To Component', 'Sent From', 'Recieved At' ],
                 columns:[
                     { type:'integer' },
                     { type:'text' },
                     { type:'text' },
+                    { type: 'dropdown', source:component_pick_list, autocomplete:true, multiple:true },
+                    { type: 'dropdown', source:component_pick_list, autocomplete:true, multiple:true }
                 ],
                 tableOverflow:true,
                 tableHeight:($("#main-content").height() - 5) + "px",
