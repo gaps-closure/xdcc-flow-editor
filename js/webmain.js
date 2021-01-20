@@ -193,14 +193,17 @@ function exit_client(){
         if(unsaved){
             console.log("The file is not saved");
             jQuery("#confirm-exit").modal();
+            jQuery("#confirm-exit .confirm-save").off("click");
             jQuery("#confirm-exit .confirm-save").click(()=>{
                 //save + exit
                 save_all().then(()=>{exit_app()});
             });
+            jQuery("#confirm-exit .confirm-dont-save").off("click");
             jQuery("#confirm-exit .confirm-dont-save").click(()=>{
                 //simply exit don't save
                 exit_app();
             });
+            jQuery("#confirm-exit .cancel").off("click");
             jQuery("#confirm-exit .cancel").click(()=>{
                 //just close the modal
                 jQuery.modal.close();

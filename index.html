@@ -4,6 +4,7 @@
 		<meta charset="UTF-8">
 		<title>GAPS: XDCC Flow Editor</title>
 		<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+		<meta charset="utf-8">
 
 		<!--jquery.modal css-->
 		<link rel="stylesheet" href="./css/external/jquery.modal.min.css" type="text/css" />
@@ -12,6 +13,9 @@
 		<link rel="stylesheet" href="./css/external/jsuites.css" type="text/css" />
 		<link rel="stylesheet" href="./css/external/jexcel.css" type="text/css" />
 		
+		<!--jsonedit css-->
+		<link rel="stylesheet" href="./css/external/jsoneditor.min.css" type="text/css" />
+		
 		<!-- our css -->
 		<link rel="stylesheet" href="./css/main.css" type="text/css" />
 
@@ -19,10 +23,15 @@
 		<script language="javascript">jQuery=require("./js/external/jquery-3.2.1.min.js");</script>
 		<script src="./js/external/jquery.modal-0.8.2.min.js"></script>
 
+		
+
 		<!-- jexcel/jsuites -->
 		<script src="./js/external/jsuites.js"></script>
 		<script src="./js/external/jexcel.js"></script>
 
+
+		<!--jsonedit -->
+		<script src="./js/external/jsoneditor.min.js"></script>
 		
 		<!-- Our logic -->
 		<script src="./js/webmain.js"></script>
@@ -70,7 +79,7 @@
 		<!-- area to inject templates such as modal boxes -->
 		<div class="templates">
 			<div class="modal" id="confirm-exit">
-				<img src="icons/baseline_save_black_18dp.png" class="modal-icon" alt="Save Message">
+				<img src="icons/baseline_save_black_18dp.png" class="modal-icon" alt="Save Message" />
 				<div class="modal-text">
 					You have unchanged changes are you sure you want to quit?
 				</div>
