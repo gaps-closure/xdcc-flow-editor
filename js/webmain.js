@@ -253,6 +253,11 @@ async function exit_app(){
     return await ipc.invoke('exit');
 }
 
+/** Query the cle json from the filesystem */
+async function read_cle_schema(){
+    return await ipc.invoke('read-cle-schema');
+}
+
 /** Event from the main process to close the client **/
 ipc.on("native-close", (event, act) => {
     if(act){

@@ -11,6 +11,7 @@ jQuery(document).ready(function () {
     var in_flows={}; //map of component name to in flows
     var out_flows={}; //map of component name to out flows
     var last_updated_name=undefined; //name of the last component updated
+    var cle_labels_list=[]; //list of cle labels
 
     var jexcel_table = null;
     
@@ -24,6 +25,7 @@ jQuery(document).ready(function () {
         table_data = [];
         in_flows = {};
         out_flows = {};
+        cle_labels_list=[];
 
         if(page_data !== undefined && page_data != null &&"topology" in page_data){
             var i;
@@ -41,6 +43,15 @@ jQuery(document).ready(function () {
         }
         //always put an empty row at the end
         table_data.push(["",""]);
+
+
+        //parse cles (for list of names)
+        if(page_data !== undefined && page_data != null && "cles" in page_data){
+            $.each(page_data["cles"],(i,cle) => {
+                cle_labels_list.push(cle["cle-label"]);
+            });
+        }
+
     }
 
     function stash_table_data(){
@@ -147,6 +158,10 @@ jQuery(document).ready(function () {
                 data: table_data,
                 colWidths: [ 200, 200],
                 colHeaders: [ 'Component', 'Label' ],
+                columns:[
+                    { type:'text' },
+                    { type:'dropdown', source:cle_labels_list, autocomplete:true, multiple:false }
+                ],
                 tableOverflow:true,
                 tableHeight:($("#main-content").height() - 5) + "px",
                 disableAddColumn:true,

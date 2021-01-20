@@ -73,7 +73,12 @@ jQuery(document).ready(function () {
                     //nop invalid json
                 }
             };
-            active_json_editor = new JSONEditor($(".json-editor-area")[0], editor_options, cle_json_lst[selected]);
+            try{
+                active_json_editor = new JSONEditor($(".json-editor-area")[0], editor_options, cle_json_lst[selected]);
+            }
+            catch (error){
+                console.log("Issue while opening json editor: \n"+ error);
+            }
             resize_page();
         }
     }
@@ -111,6 +116,7 @@ jQuery(document).ready(function () {
                     $.modal.close();
                 }
             });
+            $('#add-cle-modal .cancel').off('click');
             $('#add-cle-modal .cancel').click(()=>{
                 $.modal.close();
             });
@@ -222,4 +228,12 @@ jQuery(document).ready(function () {
         }
     }
     register_site_module("mod_cle", "CLE Definitions" , "CLE Table", $(page_template),  html_templates, load_page, unload_page, resize_page);
+    //preload cle json schema
+    read_cle_schema().then((schema)=>{
+        //console.log(schema);
+
+        
+        //FIXME schema is not getting parsed right, even with it working correctly in the web version of jsoneditor
+        //editor_options['schema'] = schema;
+    });
 });

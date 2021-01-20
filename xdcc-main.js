@@ -13,13 +13,15 @@ var xdcc_json = null;
 var addtl_files={};
 //flag for unsaved changes
 var unsaved_changes=false;
+//path to the cle schema
+var cle_schema_path="";
 
 //flag to allow exit
 var allow_exit=false;
 
-//Read the file name from the parm file
+//Read the file name from the parm file before calling createWindow()
 function prepareParams () {
-    var loadedCnt=2;//number of parameters we are loading
+    var loadedCnt=3;//number of parameters we are loading
 
     fs.readFile("param.debugmode", "utf8", function (err,data) {
         console.log("debug mode: " + data);
@@ -35,6 +37,14 @@ function prepareParams () {
     fs.readFile("param.inputfile", "utf8", function (err,data) {
         console.log("xdcc file: " + data);
         json_file = data.trim();
+        loadedCnt--;
+        if(loadedCnt == 0){ //this is the last parameter loaded, open the window
+            createWindow();
+        }
+    });
+    fs.readFile("param.cleschema", "utf8", function (err,data) {
+        console.log("cleschea file: " + data);
+        cle_schema_path = data.trim();
         loadedCnt--;
         if(loadedCnt == 0){ //this is the last parameter loaded, open the window
             createWindow();
@@ -209,4 +219,23 @@ ipcMain.handle('update-addtl-file', (event, file, data) => {
 ipcMain.handle('exit', (event, file, data) => {
     allow_exit = true;
     app.quit();
+});
+
+/** Read in the CLEschema **/
+ipcMain.handle('read-cle-schema',(event) =>{
+    if(fs.existsSync(cle_schema_path)){
+        var data = fs.readFileSync(cle_schema_path,"utf-8");
+        try {
+            const obj = JSON.parse(data);
+            return(obj);
+        }
+        catch(err){
+            console.log("Unable parese CLE json: " + err)
+            return(null);
+        }
+    }
+    else{
+        console.log("WARN: CLE json missing");
+        return null;
+    }
 });

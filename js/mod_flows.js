@@ -8,6 +8,7 @@ jQuery(document).ready(function () {
     var table_data=[]; //the visual table (flowID, message_name, Label)
     var id_list=[];
     var component_pick_list=[];
+    var cle_labels_list=[];
     var last_updated_id=undefined;
 
     var jexcel_table = null;
@@ -53,6 +54,7 @@ jQuery(document).ready(function () {
         table_data = [];
         var sending_components={};
         var recieving_components={};
+        cle_labels_list=[];
         component_pick_list=[]
 
         //parse topology
@@ -88,6 +90,14 @@ jQuery(document).ready(function () {
             });
         }
 
+        //parse cles (for list of names)
+        if(page_data !== undefined && page_data != null && "cles" in page_data){
+            $.each(page_data["cles"],(i,cle) => {
+                cle_labels_list.push(cle["cle-label"]);
+            });
+        }
+
+        //parse the actual flows
         if(page_data !== undefined && page_data != null && "flows" in page_data){
             var i;
             
@@ -245,12 +255,12 @@ jQuery(document).ready(function () {
             jexcel_table = jexcel(sheet,
             {
                 data:table_data,
-                colWidths: [ 100, 250, 250,250,250],
-                colHeaders: [ 'Data ID', 'Message', 'Label', 'From Component', 'To Component', 'Sent From', 'Recieved At' ],
+                colWidths: [ 100, 250, 300,220,220],
+                colHeaders: [ 'Data ID', 'Message', 'Label', 'From Component', 'To Component'],
                 columns:[
                     { type:'integer' },
                     { type:'text' },
-                    { type:'text' },
+                    { type:'dropdown', source:cle_labels_list, autocomplete:true, multiple:false },
                     { type: 'dropdown', source:component_pick_list, autocomplete:true, multiple:true },
                     { type: 'dropdown', source:component_pick_list, autocomplete:true, multiple:true }
                 ],
