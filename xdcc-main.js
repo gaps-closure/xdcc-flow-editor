@@ -1,7 +1,10 @@
 const { app, BrowserWindow } = require('electron');
 const fs = require('fs');
 const path = require("path");
-const { ipcMain } = require('electron')
+const { ipcMain } = require('electron');
+
+//local path to the meta schema
+const cle_meta_schea_path="addtl-files/json-schema-draft7.json"
 
 //if debug mode is enabled (false by defautl)
 var enable_debug = false; 
@@ -107,7 +110,13 @@ function save_xdcc_json(){
     var dir = path.dirname(json_file);
     
     for(var filename in addtl_files){
-        fs.writeFileSync(dir + path.sep + filename,addtl_files[filename],{"endocding": "utf8"});
+        if(addtl_files[filename] !== null){
+            fs.writeFileSync(dir + path.sep + filename,addtl_files[filename],{"endocding": "utf8"});
+        }
+        else{
+            //file removed
+            fs.unlinkSync(dir + path.sep + filename);
+        }
     }
 
     //clear
@@ -148,11 +157,13 @@ function read_adtl_file(filename){
     var dir = path.dirname(json_file);
     var addtl_file = dir + path.sep + filename;
     
-    if(addtl_files.hasOwnProperty(filename)){
+    console.log("reading " + addtl_file);
+    if(addtl_files.hasOwnProperty(filename) && addtl_files !== null){
         return(addtl_files[filename]);
     }
     if(fs.existsSync(addtl_file)){
         addtl_files[filename] = fs.readFileSync(addtl_file,"utf-8");
+        console.log("read " + addtl_files[filename]);
         return(addtl_files[filename]);
     }
     else{
@@ -207,11 +218,14 @@ ipcMain.handle('check-if-unsaved', (event) => {
 
 /** Get the working copy of an additional file **/
 ipcMain.handle('get-addtl-file', (event, file) => {
-    read_adtl_file(file);
+    return read_adtl_file(file);
 });
 
 /** Update the working copy of an additional file **/
 ipcMain.handle('update-addtl-file', (event, file, data) => {
+    if(!file in addtl_files || addtl_files[file] != data){
+        unsaved_changes=true;
+    }
     addtl_files[file]=data;
 });
 
@@ -223,6 +237,7 @@ ipcMain.handle('exit', (event, file, data) => {
 
 /** Read in the CLEschema **/
 ipcMain.handle('read-cle-schema',(event) =>{
+    console.log("read cle schema");
     if(fs.existsSync(cle_schema_path)){
         var data = fs.readFileSync(cle_schema_path,"utf-8");
         try {
@@ -230,12 +245,33 @@ ipcMain.handle('read-cle-schema',(event) =>{
             return(obj);
         }
         catch(err){
-            console.log("Unable parese CLE json: " + err)
+            console.log("Unable parese CLE schema json: " + err)
             return(null);
         }
     }
     else{
-        console.log("WARN: CLE json missing");
+        console.log("WARN: CLE schema json missing");
+        return null;
+    }
+});
+
+/** Read in json schema draft7 meta schema */
+/** Read in the CLEschema **/
+ipcMain.handle('read-meta-schema',(event) =>{
+    console.log("read meta schema");
+    if(fs.existsSync(cle_meta_schea_path)){
+        var data = fs.readFileSync(cle_meta_schea_path,"utf-8");
+        try {
+            const obj = JSON.parse(data);
+            return(obj);
+        }
+        catch(err){
+            console.log("Unable parse meta schema json: " + err)
+            return(null);
+        }
+    }
+    else{
+        console.log("WARN: meta schema json missing");
         return null;
     }
 });

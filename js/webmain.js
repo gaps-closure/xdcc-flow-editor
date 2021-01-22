@@ -258,6 +258,21 @@ async function read_cle_schema(){
     return await ipc.invoke('read-cle-schema');
 }
 
+/** Query the meta json schema from the filesystem */
+async function read_meta_schema(){
+    return await ipc.invoke('read-meta-schema');
+}
+
+/** Get an additional file (JSON schema) */
+async function read_addtl_file(filename){
+    return await ipc.invoke('get-addtl-file', filename);
+}
+
+/** Stash/update additional file (JSON schema) */
+async function update_addtl_file(filename, data){
+    return await ipc.invoke('update-addtl-file', filename, data);
+}
+
 /** Event from the main process to close the client **/
 ipc.on("native-close", (event, act) => {
     if(act){

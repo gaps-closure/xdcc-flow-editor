@@ -29,5 +29,6 @@ echo "Running using $json"
 	echo $debug > param.debugmode
 	echo $cleschema > param.cleschema
 	cd $(dirname $0)
-	npm start
+	#npm start
+	./node_modules/.bin/electron xdcc-main.js
 )

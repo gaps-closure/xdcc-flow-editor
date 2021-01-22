@@ -203,3 +203,73 @@ div.tab-listing .tab-active {
 #cle-content .ace_scrollbar{
     z-index: 2;
 }
+
+/** Message definition **/
+#message-content {
+    width:70%;
+    left: 29%;
+    position: absolute;
+}
+
+#message-listing {
+    width:28%;
+    display: inline-block;
+    overflow-y: auto;
+    border-right: solid 1px black;
+    background: #EEEEEE;
+    
+}
+
+#message-listing .message-list-name{
+    margin: 2px;
+    padding: 2px;
+    size: 1.1em;
+    background: #DDDDDD;
+    cursor: pointer;
+}
+
+#message-listing .message-selected{
+    background-color: #22A;
+    color: #FFF;
+}
+
+#message-topbar{
+    margin: 0px;
+    display: block;
+    font-size: larger;
+    font-weight: bold;
+    text-align: center;
+}
+#message-delete{
+    margin-left: 2em;
+    cursor: pointer;
+}
+
+.json-editor-area{
+    margin: 0px;
+}
+
+.add-message-btn {
+    border-radius: 3px;
+    background: #1f4d1a;
+    padding: 5px;
+    width: 90%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: larger;
+    cursor: pointer;
+}
+
+/* Override zindex */
+#message-content .ace_gutter{
+    z-index: 2;
+}
+#message-content .ace_scrollbar{
+    z-index: 2;
+}

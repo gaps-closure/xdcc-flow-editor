@@ -239,7 +239,7 @@ jQuery(document).ready(function () {
     register_site_module("mod_cle", "CLE Definitions" , "CLE Table", $(page_template),  html_templates, load_page, unload_page, resize_page);
     //preload cle json schema
     read_cle_schema().then((schema)=>{
-        //console.log(schema);
+        console.log("cle schema recieved");
         cle_schema = schema;
     });
 });
