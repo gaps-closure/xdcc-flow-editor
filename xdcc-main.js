@@ -115,7 +115,9 @@ function save_xdcc_json(){
         }
         else{
             //file removed
-            fs.unlinkSync(dir + path.sep + filename);
+            if(fs.existsSync(dir + path.sep + filename)){
+                fs.unlinkSync(dir + path.sep + filename);
+            }
         }
     }
 

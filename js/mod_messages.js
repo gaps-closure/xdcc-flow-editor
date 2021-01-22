@@ -47,8 +47,48 @@ jQuery(document).ready(function () {
             '   A Message entry for <span class="message-name" /> already exists' +
             '</div>'+
         '</div>'
+        ,
+        //Message still in use cannot delete
+        '<div class="modal" id="message-in-use">' +
+            '<img src="icons/baseline_error_outline_black_18dp.png" class="modal-icon" alt="Error" />' +
+            '<div class="modal-text">' +
+            '   The message <span class="message-name" /> is still used by flow <span class="flow-id"/>' +
+            '</div>'+
+        '</div>'
     ];
     
+    function delete_current_element(){
+        var can_delete = true;
+        var flowid=null;
+        if(page_data !== undefined && page_data != null &&"flows" in page_data){
+            $.each(page_data["flows"],(i,flow) => {
+                if(flow["message"] == selected){
+                    can_delete = false;
+                    flowid = flow["flowId"];
+                }
+            });
+        }
+
+        if(can_delete){
+            update_addtl_file(msg_json_lst[selected]["schemaFile"],null);
+            msg_label_lst=msg_label_lst.filter((v) => v!=selected);
+            console.log("filtered list");
+            console.log(msg_label_lst);
+            delete msg_json_lst[selected];
+            selected=null;
+            if(active_json_editor !== null){
+                active_json_editor.destroy();
+                active_json_editor=null;
+            }
+            stash_messages();
+            load_page();
+        }
+        else{
+            $("#message-in-use").modal();
+            $('#message-in-use .message-name').text(selected);
+            $('#message-in-use .flow-id').text(flowid);
+        }
+    }
     
     function select_element(node){
         var idx = parseInt(node.attr("data-index"));
@@ -64,6 +104,13 @@ jQuery(document).ready(function () {
             $("#message-filename").text(msg_json_lst[selected]["schemaFile"] + " (" + msg_json_lst[selected]["schemaType"] + ")")
             $("#message-topbar").css("display","block");
             $('#message-label-name').val("");
+
+            //delete button
+            $('#message-delete').off('click');
+            $('#message-delete').click(()=>{
+                delete_current_element();
+            });
+
             if(active_json_editor!==null){
                 active_json_editor.destroy();
                 active_json_editor=null;
