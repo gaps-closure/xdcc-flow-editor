@@ -41,7 +41,55 @@ jQuery(document).ready(function () {
             '   The CLE entry for <span class="cle-name" /> already exists' +
             '</div>'+
         '</div>'
+        ,
+        //CLE in use, cannot be deleted
+        '<div class="modal" id="cle-in-use">' +
+            '<img src="icons/baseline_error_outline_black_18dp.png" class="modal-icon" alt="Error" />' +
+            '<div class="modal-text">' +
+            '   The CLE Label <span class="cle-name" /> is still used by <span class="cle-component"/>' +
+            '</div>'+
+        '</div>'
+        
     ];
+    
+
+    function delete_current_element(){
+        var can_delete = true;
+        var msg=null;
+        if(page_data !== undefined && page_data != null &&"flows" in page_data){
+            $.each(page_data["flows"],(i,flow) => {
+                if(flow["label"] == selected){
+                    can_delete = false;
+                    msg = "flow id " + flow["flowId"];
+                }
+            });
+        }
+        if(page_data !== undefined && page_data != null &&"topology" in page_data){
+            $.each(page_data["topology"],(i,component) => {
+                if(component["label"] == selected){
+                    can_delete = false;
+                    msg = "component " + component["component"];
+                }
+            });
+        }
+
+        if(can_delete){
+            cle_label_lst=cle_label_lst.filter((v) => v!=selected);
+            delete cle_json_lst[selected];
+            selected=null;
+            if(active_json_editor !== null){
+                active_json_editor.destroy();
+                active_json_editor=null;
+            }
+            stash_cles();
+            load_page();
+        }
+        else{
+            $("#cle-in-use").modal();
+            $('#cle-in-use .cle-name').text(selected);
+            $('#cle-in-use .cle-component').text(msg);
+        }
+    }
     
     
     function select_element(node){
@@ -56,6 +104,13 @@ jQuery(document).ready(function () {
             $("#cle-title").text(selected);
             $("#cle-topbar").css("display","block");
             $('#cle-label-name').val("");
+
+            //delete button
+            $('#cle-delete').off('click');
+            $('#cle-delete').click(()=>{
+                delete_current_element();
+            });
+
             if(active_json_editor!==null){
                 active_json_editor.destroy();
             }
