@@ -9,6 +9,7 @@ jQuery(document).ready(function () {
     var id_list=[];
     var component_pick_list=[];
     var cle_labels_list=[];
+    var message_list=[];
     var last_updated_id=undefined;
 
     var jexcel_table = null;
@@ -94,6 +95,13 @@ jQuery(document).ready(function () {
         if(page_data !== undefined && page_data != null && "cles" in page_data){
             $.each(page_data["cles"],(i,cle) => {
                 cle_labels_list.push(cle["cle-label"]);
+            });
+        }
+
+        //parse message names
+        if(page_data !== undefined && page_data != null && "messages" in page_data){
+            $.each(page_data["messages"],(i,msg) => {
+                message_list.push(msg["name"]);
             });
         }
 
@@ -259,7 +267,7 @@ jQuery(document).ready(function () {
                 colHeaders: [ 'Data ID', 'Message', 'Label', 'From Component', 'To Component'],
                 columns:[
                     { type:'integer' },
-                    { type:'text' },
+                    { type:'dropdown', source:message_list, autocomplete:true, multiple:false },
                     { type:'dropdown', source:cle_labels_list, autocomplete:true, multiple:false },
                     { type: 'dropdown', source:component_pick_list, autocomplete:true, multiple:true },
                     { type: 'dropdown', source:component_pick_list, autocomplete:true, multiple:true }
